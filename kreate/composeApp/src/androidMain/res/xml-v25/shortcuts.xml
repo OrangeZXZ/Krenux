@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<shortcuts xmlns:android="http://schemas.android.com/apk/res/android">
+    <shortcut
+        android:shortcutId="search"
+        android:enabled="true"
+        android:icon="@drawable/search"
+        android:shortcutShortLabel="@android:string/search_go">
+        <intent
+            android:targetClass="it.fast4x.rimusic.MainActivity"
+            android:targetPackage="me.knighthat.kreate"
+            android:action="it.fast4x.rimusic.action.search" />
+    </shortcut>
+    <shortcut
+        android:shortcutId="crashlog"
+        android:enabled="true"
+        android:icon="@drawable/copy"
+        android:shortcutShortLabel="@string/copy_crash_log_to_clipboard">
+        <intent
+            android:targetClass="app.kreate.android.CopyCrashlogActivity"
+            android:targetPackage="me.knighthat.kreate"
+            android:action="COPY_CRASH_LOG" />
+    </shortcut>
+</shortcuts>

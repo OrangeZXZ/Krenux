@@ -1,0 +1,253 @@
+name: Build all flavors
+
+on:
+  schedule:
+    # Gotta wait until contributors.json is updated
+    - cron: '0 3 1,14 * *'  # 3AM on the 1st and 14th of every month
+
+  # Allow manual trigger
+  workflow_dispatch:
+
+# Prevent multiple jobs from running at the same time
+concurrency:
+  group: 'biweekly-deploy'
+  cancel-in-progress: false  # Don't cancel any in-progress runs in this group
+
+jobs:
+  build_time:
+    name: Capture current time
+    runs-on: ubuntu-latest
+    # Set date as a variable
+    outputs:
+      date: ${{ steps.date.outputs.date }}
+      dot_date: ${{ steps.dot_date.outputs.date }}
+
+    steps:
+      - name: Get date
+        id: date
+        # Output of "October 2 2024" will be "20241002"
+        run: echo "date=$(date +'%Y%m%d')" >> $GITHUB_OUTPUT
+
+      - name: Get dot date
+        id: dot_date
+        # Output of "October 2 2024" will be "2024.10.02"
+        run: echo "date=$(date +'%Y.%m.%d')" >> $GITHUB_OUTPUT
+
+  versioning:
+    name: Extract version
+    runs-on: ubuntu-latest
+    # Set versions as a variable
+    outputs:
+      # Current version in repository
+      downstream: ${{ steps.downstream.outputs.version }}
+      # Current version code in repository
+      code: ${{ steps.downstream.outputs.code }}
+      # Latest build's version
+      upstream: ${{ steps.upstream.outputs.version }}
+    env:
+      GITHUB_REPOSITORY: ${{ github.action_repository }}
+
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          submodules: true
+
+      - name: Get downstream (local) version
+        id: downstream
+        # Output is current version located inside composeApp/build.gradle.kts
+        # android {
+        #   create( "" ) {
+        #     versionName = "..."
+        #     versionName = 000
+        #   }
+        # }
+        run: |
+          VERSION_NAME=$(grep -E '^\s*versionName\s*= "' composeApp/build.gradle.kts | awk -F '"' '{print $2}')
+          echo "version=$VERSION_NAME" >> $GITHUB_OUTPUT
+          
+          VERSION_CODE=$(grep -E '^\s*val VERSION_CODE\s*=\s*' composeApp/build.gradle.kts | awk -F '= ' '{print $2}')
+          echo "code=$VERSION_CODE" >> $GITHUB_OUTPUT
+
+      - name: Get upstream version
+        id: upstream
+        # Fetch tag_name of latest tag from GitHub.
+        # tag_name contains "v" prefix, so it must be removed
+        # before adding to GITHUB_OUTPUT
+        run: |
+          tag_name="$(curl -s https://api.github.com/repos/$GITHUB_REPOSITORY/releases/latest | jq -r .tag_name)"
+          echo "version=${tag_name#v}" >> $GITHUB_OUTPUT
+
+  verify-version:
+    needs: [versioning]
+    name: Verify versions
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Whether build can proceed
+        # Compare upstream and downstream version
+        # echo ::error::"" sets custom error message
+        run: |
+          if [ "${{ needs.versioning.outputs.downstream }}" = "${{ needs.versioning.outputs.upstream }}" ]; then
+            echo "::error::Matched upstream and downstream versions"
+            exit 1
+          fi
+
+      - uses: actions/checkout@v6
+        with:
+          submodules: true
+
+      # Exit build early.
+      # Build will fail still if this file doesn't exist,
+      # but it takes some time to setup compiler,
+      # place this here to shorten that
+      - name: Whether changelogs exists
+        env:
+          VERSION_CODE: ${{ needs.versioning.outputs.code }}
+        # !: Not
+        # -e: true if file exists
+        run: |
+          if [ ! -e "fastlane/metadata/android/en-US/changelogs/$VERSION_CODE.txt" ]; then
+            echo "::error::$VERSION_CODE.txt release note doesn't exist"
+            exit 1
+          fi
+          
+  build-complex:
+    needs: [build_time, verify-version]
+    name: Build all versions
+    runs-on: ubuntu-latest
+
+    timeout-minutes: 60       # Prevent Github Action from terminating this workflow on first run
+
+    env:
+      BUILD_DATE: ${{ needs.build_time.outputs.dot_date }}
+      STORE_PASSWORD: ${{ secrets.STORE_PASSWORD }}
+      KEY_PASSWORD: ${{ secrets.PROD_KEY_PASSWORD }}
+      OFFICIAL_BUILD_PASSPHRASE: ${{ secrets.OFFICIAL_BUILD_PASSPHRASE }}
+      KEYSTORE_PATH: ${{ vars.KEYSTORE_PATH }}
+      KEYSTORE_FILENAME: production.jks
+
+    strategy:
+      matrix:
+        platform: [ 'Github' ]
+        # Kreate-release.apk
+        # Kreate-arm64.apk
+        # Kreate-arm32.apk
+        # Kreate-x86.apk
+        # Kreate-x86_64.apk
+        architect: [ 'Universal', 'Arm64', 'Arm32', 'X86', 'X86_64' ]
+        type: [ 'Release' ]
+        include:
+          # Kreate-izzy.apk
+          - platform: Izzy
+            architect: Universal
+            type: Release
+
+          # Kreate-uncompressed.apk
+          - platform: Github
+            architect: Universal
+            type: Uncompressed
+
+    steps:
+      # Checkout is placed before reverting keystore because in read
+      # GitHub Action env, the repo gets cloned into another folder
+      # i.e /home/runner/work/Kreate/Kreate
+      # Without cloning first, the keystore will be placed in
+      # /home/runner/work/Kreate/.ignore.d/keystores/production.jks
+      # Which will unintentionally make the build process fail because it
+      # can't find the keystore to sign the apk
+      - uses: actions/checkout@v6
+        with:
+          submodules: true
+          # Only clone the latest version of repo.
+          # Checking for changes happened before this job so
+          # it's unnecessary to pull more than needed.
+          # Plus, save time for other steps to run
+
+      - name: Revert keystore from base64 to PCKS#12 file
+        run: |
+          mkdir -p "$KEYSTORE_PATH"
+
+          echo "${{ secrets.PROD_KEYSTORE }}" | base64 -d > $KEYSTORE_PATH/$KEYSTORE_FILENAME
+
+      # This step is designed to fail when decoded keystore's
+      # hash doesn't match pre-defined hash
+      - name: Verify keystore
+        run: echo "${{ secrets.PROD_KEYSTORE_SHA256 }} $KEYSTORE_PATH/$KEYSTORE_FILENAME" | sha256sum -c
+
+      - name: Setup Java 21
+        uses: actions/setup-java@v5.0.0
+        with:
+          java-version: "21"
+          distribution: "corretto"
+          # Shouldn't use cache here, custom cache artifact is handled separately
+
+      - name: Restore Gradle dependencies & build cache
+        # actions/cache/restore only downloads the cache
+        # This will save time uploading the cache, since cache
+        # builder is handled by another workflow
+        uses: actions/cache/restore@v4
+        with:
+          path: |
+            ~/.gradle/caches
+            ~/.gradle/wrapper
+            ./build
+            ./composeApp/build
+          key: gradle-${{ runner.os }}-${{ hashFiles('**/gradle-wrapper.properties', '**/libs.versions.toml') }}
+          # Pulls latest cache artifact
+          restore-keys: gradle-${{ runner.os }}-
+
+      - name: Build with Gradle
+        # I.E. assembleGithubX64ProdRelease
+        run: ./gradlew "assemble${{ matrix.platform }}${{ matrix.architect }}Prod${{ matrix.type }}"
+
+      - name: Get build path
+        id: build_path
+        env:
+          PLATFORM: ${{ matrix.platform }}
+          ARCH: ${{ matrix.architect }}
+          BUILD_TYPE: ${{ matrix.type }}
+        run: |
+          # Github -> github 
+          LOWERCASE_PLATFORM=$(echo $PLATFORM | tr '[:upper:]' '[:lower:]')
+          # Release -> release
+          LOWERCASE_BUILD_TYPE=$(echo $BUILD_TYPE | tr '[:upper:]' '[:lower:]')
+          
+          echo "path=composeApp/build/outputs/apk/$LOWERCASE_PLATFORM${ARCH}Prod/$LOWERCASE_BUILD_TYPE" >> $GITHUB_OUTPUT
+
+      - name: Upload artifacts for uploading
+        uses: actions/upload-artifact@v5
+        with:
+          name: ${{ matrix.platform }}-${{ matrix.architect }}-${{ matrix.type }}
+          path: ${{ steps.build_path.outputs.path }}/*.apk
+
+  upload-to-release:
+    needs: [build_time, versioning, build-complex]
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Download signed APKs
+        uses: actions/download-artifact@v6.0.0
+
+      - name: Upload built APK to release
+        # Skip this step when running with nektos/act
+        if: ${{ !env.ACT }}
+        uses: softprops/action-gh-release@v2
+        with:
+          files: '*.apk'
+          # Name: v0.0.1-20250303
+          name: v${{ needs.versioning.outputs.downstream }}-${{ needs.build_time.outputs.date }}
+          tag_name: v${{ needs.versioning.outputs.downstream }}
+          make_latest: "true"
+          body: |           
+            If you don't know what to download, please refer to article [Why are there so many APK files?](https://kreate.knighthat.me/usr/faq/why-are-there-so-many-apk-files)
+            ## What's `Kreate-izzy.apk`
+            
+            This is APK built specifically for IzzyOnDroid with update checker disabled. You shouldn't
+            download this version here.
+            
+            ## Changelogs
+            
+            You can read change logs on our [Blog](https://kreate.knighthat.me/blog/tags/release) website
+
+          token: ${{ secrets.RELEASE_TOKEN }}
+          generate_release_notes: true

@@ -1,0 +1,164 @@
+
+[versions]
+agp = "8.13.0"
+kotlin = "2.2.21"
+kotlin-ksp = "2.2.21-2.0.4"
+coil3 = "3.3.0"
+room = "2.7.2"
+media3 = "1.8.0"
+ktor = "3.3.2"
+brotli = "0.1.2"
+palette = "1.0.0"
+desugaring = "2.1.5"
+appcompat = "1.7.1"
+materialIcons = "1.7.3"
+androidmaterial = "1.13.0"
+constraintlayout = "1.1.1"
+translator = "1.1.1"
+kotlin-csv = "1.10.0"
+monetcompat = "0.4.1"
+timber = "5.0.1"
+okhttp3 = "5.3.2"
+math3 = "3.6.1"
+toasty = "1.5.2"
+androidyoutubeplayer = "13.0.0"
+glance = "1.1.1"
+navigationKMP = "2.9.1"
+vlcj = "4.11.0"
+kotlinxCoroutines = "1.10.2"
+hypnoticcanvas = "0.4.1"
+ksoup = "0.6.0"
+jetbrains-annotations = "26.0.2-1"
+lombok = "1.18.42"
+junit5 = "6.0.1"
+webkit = "1.14.0"
+newpipe-extractor = "0.24.8"
+compose-kmp = "1.9.3"
+license-report = "3.0.1"
+hilt = "2.57.2"
+material3-kmp = "1.9.0"
+junit4 = "4.13.2"
+robolectric = "4.16"
+androidTest = "1.7.0"
+lifecycle = "2.10.0"
+
+
+[libraries]
+# Kotlinx
+kotlinx-coroutines = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-core", version.ref = "kotlinxCoroutines" }
+kotlinx-coroutines-guava = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-guava", version.ref = "kotlinxCoroutines" }
+kotlinx-coroutines-test = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-test", version.ref = "kotlinxCoroutines" }
+
+# Room
+room-compiler = { group = "androidx.room", name = "room-compiler", version.ref = "room" }
+room-runtime = { group = "androidx.room", name = "room-runtime", version.ref = "room" }
+
+# Media
+media3-exoplayer = { group = "androidx.media3", name = "media3-exoplayer", version.ref = "media3" }
+media3-session = { group = "androidx.media3", name = "media3-session", version.ref = "media3" }
+media3-datasource-okhttp = { group = "androidx.media3", name = "media3-datasource-okhttp", version.ref = "media3" }
+
+# Androidx
+androidx-appcompat = { group = "androidx.appcompat", name = "appcompat", version.ref = "appcompat" }
+androidx-appcompat-resources = { group = "androidx.appcompat", name = "appcompat-resources", version.ref = "appcompat" }
+androidx-palette = { group = "androidx.palette", name = "palette", version.ref = "palette" }
+androidx-constraintlayout = { group = "androidx.constraintlayout", name = "constraintlayout-compose", version.ref = "constraintlayout" }
+androidx-glance-widgets = { group = "androidx.glance", name = "glance-appwidget", version.ref = "glance" }
+androidx-webkit = { group = "androidx.webkit", name = "webkit", version.ref = "webkit" }
+androidx-lifecycle-runtime = { group = "androidx.lifecycle", name = "lifecycle-runtime-ktx", version.ref = "lifecycle" }
+androidx-lifecycle-process = { group = "androidx.lifecycle", name = "lifecycle-process", version.ref = "lifecycle" }
+
+# Ktor
+ktor-core = { group = "io.ktor", name = "ktor-client-core", version.ref = "ktor" }
+ktor-okhttp = { group = "io.ktor", name = "ktor-client-okhttp", version.ref = "ktor" }
+ktor-content-negotiation = { group = "io.ktor", name = "ktor-client-content-negotiation", version.ref = "ktor" }
+ktor-encoding = { group = "io.ktor", name = "ktor-client-encoding", version.ref = "ktor" }
+ktor-serialization-json = { group = "io.ktor", name = "ktor-serialization-kotlinx-json", version.ref = "ktor" }
+ktor-serialization-protobuf = { group = "io.ktor", name = "ktor-serialization-kotlinx-protobuf", version.ref = "ktor" }
+ktor-websockets = { group = "io.ktor", name = "ktor-client-websockets", version.ref = "ktor" }
+
+# Jetbrains Compose
+material-icons-desktop-ext = { group = "org.jetbrains.compose.material", name = "material-icons-extended-desktop", version.ref = "materialIcons" }
+material-icons-kmp = { group = "org.jetbrains.compose.material", name = "material-icons-core", version.ref = "materialIcons" }
+navigation-kmp = {  group = "org.jetbrains.androidx.navigation", name = "navigation-compose", version.ref = "navigationKMP" }
+compose-kmp-ui = { group = "org.jetbrains.compose.ui", name = "ui", version.ref = "compose-kmp" }
+compose-kmp-foundation = { group = "org.jetbrains.compose.foundation", name = "foundation", version.ref = "compose-kmp" }
+compose-kmp-material3 = { group = "org.jetbrains.compose.material3", name = "material3", version.ref = "material3-kmp" }
+compose-kmp-animation = { group = "org.jetbrains.compose.animation", name = "animation", version.ref = "compose-kmp" }
+
+# OkHttp
+okhttp3-logging-interceptor = { group = "com.squareup.okhttp3", name = "logging-interceptor", version.ref = "okhttp3" }
+
+# Coil
+coil3-compose-core = { group = "io.coil-kt.coil3", name = "coil-compose-core", version.ref = "coil3" }
+coil3-network-ktor = { group = "io.coil-kt.coil3", name = "coil-network-ktor3", version.ref = "coil3" }
+
+# KSoup
+ksoup-html = { group = "com.mohamedrejeb.ksoup", name = "ksoup-html", version.ref = "ksoup" }
+ksoup-entities = { group = "com.mohamedrejeb.ksoup", name = "ksoup-entities", version.ref = "ksoup" }
+
+# Hypnotic canvas
+hypnoticcanvas = { group = "com.mikepenz.hypnoticcanvas", name = "hypnoticcanvas", version.ref = "hypnoticcanvas" }
+hypnoticcanvas-shaders = { group = "com.mikepenz.hypnoticcanvas", name = "hypnoticcanvas-shaders", version.ref = "hypnoticcanvas" }
+
+# Newpipe extractor
+newpipe-extractor = { group = "com.github.teamnewpipe.NewPipeExtractor", name = "extractor", version.ref = "newpipe-extractor" }
+nanojson = { group = "com.github.TeamNewPipe", name = "nanojson", version = "e9d656ddb49a412a5a0a5d5ef20ca7ef09549996" }
+
+# Annotations
+lombok = { group = "org.projectlombok", name = "lombok", version.ref = "lombok" }
+jetbrains-annotations = { group = "org.jetbrains", name = "annotations", version.ref = "jetbrains-annotations" }
+
+# Testing
+junit5-jupiter-api = { group = "org.junit.jupiter", name = "junit-jupiter-api", version.ref = "junit5" }
+junit5-jupiter-engine = { group = "org.junit.jupiter", name = "junit-jupiter-engine", version.ref = "junit5" }
+junit5-jupiter-params = { group = "org.junit.jupiter", name = "junit-jupiter-params", version.ref = "junit5" }
+junit-platform = { group = "org.junit.platform", name = "junit-platform-launcher", version.ref = "junit5" }
+kotlin-test = { group = "org.jetbrains.kotlin", name = "kotlin-test", version.ref = "kotlin" }
+junit4 = { group = "junit", name = "junit", version.ref = "junit4" }
+robolectric = { group = "org.robolectric", name = "robolectric", version.ref = "robolectric" }
+androidx-test = { group = "androidx.test", name = "core", version.ref = "androidTest" }
+kotlin-reflect = { group = "org.jetbrains.kotlin", name = "kotlin-reflect", version.ref = "kotlin" }
+
+# MonetCompat
+monetcompat = {  group = "com.github.KieronQuinn", name = "MonetCompat", version.ref = "monetcompat" }
+androidmaterial = { group = "com.google.android.material", name = "material", version.ref = "androidmaterial" }     # Required by MonetCompat for some reason
+
+# Dependency injection
+android-hilt-compiler = { group = "com.google.dagger", name = "hilt-android-compiler", version.ref = "hilt" }
+android-hilt = { group = "com.google.dagger", name = "hilt-android", version.ref = "hilt" }
+
+# Extras
+translator = {  group = "com.github.therealbush", name = "translator", version.ref = "translator" }
+kotlin-csv = {  group = "com.jsoizo", name = "kotlin-csv-jvm", version.ref = "kotlin-csv" }
+timber = {  group = "com.jakewharton.timber", name = "timber", version.ref = "timber" }
+math3 = { group = "org.apache.commons", name = "commons-math3", version.ref = "math3" }
+toasty = { group = "com.github.GrenderG", name = "Toasty", version.ref = "toasty" }
+androidyoutubeplayer = { group = "com.pierfrancescosoffritti.androidyoutubeplayer", name = "core", version.ref = "androidyoutubeplayer" }
+vlcj = {  group = "uk.co.caprica", name = "vlcj", version.ref = "vlcj" }
+brotli = { group = "org.brotli", name = "dec", version.ref = "brotli" }
+desugaring-nio = { group = "com.android.tools", name = "desugar_jdk_libs_nio", version.ref = "desugaring" }
+
+
+[plugins]
+# Multiplatform
+kotlin-multiplatform = { id = "org.jetbrains.kotlin.multiplatform", version.ref = "kotlin" }
+kotlin-compose = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
+jetbrains-compose = { id = "org.jetbrains.compose", version.ref = "compose-kmp" }
+
+# Android
+android-application = { id = "com.android.application", version.ref = "agp" }
+room = { id = "androidx.room", version.ref = "room" }
+
+# Others
+kotlin-ksp = { id = "com.google.devtools.ksp", version.ref = "kotlin-ksp" }
+kotlin-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin"}
+kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
+license-report = { id = "com.github.jk1.dependency-license-report", version.ref = "license-report" }
+hilt = { id = "com.google.dagger.hilt.android", version.ref = "hilt" }
+
+
+[bundles]
+compose-kmp = ['compose-kmp-animation', 'compose-kmp-foundation', 'compose-kmp-material3', 'compose-kmp-ui']
+ktor = ['ktor-core', 'ktor-encoding', 'ktor-content-negotiation', 'ktor-serialization-json', 'ktor-serialization-protobuf', 'ktor-okhttp', 'ktor-websockets']
+junit5 = ["junit5-jupiter-params", "junit5-jupiter-engine", "junit5-jupiter-api"]

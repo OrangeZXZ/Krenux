@@ -1,0 +1,37 @@
+/captures
+.externalNativeBuild
+.cxx
+.ignore.d/
+
+###      IDEA
+.idea
+.gradle
+.vscode
+
+###      BUILDS
+**build/
+
+###      BINS
+**bin/
+
+###      ANDROID
+**APK keystore/
+.DS_Store
+**/res/raw/release_notes.txt
+!composeApp/src/androidDebug/res/raw/release_notes.txt
+
+###      PROPERTIES
+**local.properties
+**crowdin.properties
+**__crowdin.properties
+
+
+###     DEPENDENCIES
+/YT python/
+/.kotlin/
+
+
+### nektos/act
+.env
+.secrets
+.vars

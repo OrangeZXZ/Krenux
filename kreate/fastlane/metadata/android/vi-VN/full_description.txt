@@ -1,0 +1,19 @@
+<p>
+  Bản fork của <a href="https://github.com/fast4x/RiMusic">RiMusic</a>, với hiệu năng là ưu tiên hàng đầu.
+</p>
+
+<b>Các tính năng:</b>
+<ul>
+  <li>Hỗ trợ đa ngôn ngũ</li>
+  <li>Thiết kế thân thiện</li>
+  <li>Tải nhạc để nghe offline</li>
+  <li>Nghe nhạc khi tắt màn hình</li>
+  <li>Báo cáo thông số (xử lý và lưu trữ nội bộ)</li>
+  <li>Nhiều hiệu ứng âm anh (một số hiệu ứng yêu cầu quyền, nhưng mặc định tắt)</li>
+  <li>Hẹn giờ tắt</li>
+  <li>Toàn quyền điều khiển âm thanh</li>
+  <li>Hỗ trợ Android Auto, AndroidTV, v.v.</li>
+  <li>Xuất nhạc đã lưu</li>
+  <li>Nghe nhạc khi không có mạng</li>
+  <li>Và nhiều thứ khác nữa...</li>
+</ul>
